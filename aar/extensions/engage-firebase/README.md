@@ -98,4 +98,4 @@ For example, **Notification Campaign** support can be implemented by adding `eng
 extension.
 
 Engage Extensions can be used by simply adding them as project dependencies. 
-The available Engage Android Extensions can be found at https://github.com/diagnal/engage-android-sdk/tree/master/aar/extensions
+The available Engage Android Extensions can be found at https://github.com/diagnal/engage-android-sdk/extensions.
