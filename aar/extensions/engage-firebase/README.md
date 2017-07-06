@@ -1,101 +1,79 @@
 [![N|Solid](http://i.imgur.com/iz9YsTS.png)](https://diagnal.com)
-# Engage Android SDK #
-Engage is real-time targeted marketing campaigns that drive user acquisition and conversion.
-It promotes content to users and access customer sentiment.
+# Engage Firebase Extension #
+Engage Firebase Extension wraps Firebase Messaging and analytics to provide methods for logging events and setting user properties.
 
-Engage Android SDK allows easy integration of Engage to your android application in a few steps.
-Engage Android SDK requires API 17 (Android 4.2) or higher. 
 
 ## Getting Started
-### Step 1: Install the Library
-The Engage Android SDK is distributed as `aar` package. You can obtain the latest Engage Android SDK aar file from https://github.com/diagnal/engage-android-sdk/
+### Step 1: Install the Engage Core Library
+Engage Firebase is an extension of Engage Android SDK and has dependency on `engage-core` library.
+Follow the instructions from https://github.com/diagnal/engage-android-sdk/ to install and initialize the `engage-core` library
 
-Include aar file as a dependency in you project. 
-The steps for adding an aar dependency can be found at https://developer.android.com/studio/projects/android-library.html#AddDependency
-### Step 2:  Initialize the Client
-The entry point of the SDK is through the `Engage` class. We recommend initializing the client in the `onCreate()` your Application subclass.
-```javascript
-Engage.initialize(applicationContext, ENGAGE_CLIENT_ID, ENGAGE_PROJECT_ID);
-```
-`ENGAGE_CLIENT_ID` and `ENGAGE_PROJECT_ID` can be obtained from your [Enage Dashboard](http://engage.diagnal.com )
+### Step 2:  Install the Engage Firebase Library
+ The Engage Firebase extension is distributed as `aar` package. You can obtain the latest aar file from https://github.com/diagnal/engage-android-sdk/tree/master/aar/extensions/engage-firebase
+
+Include aar file as a dependency in you project. The steps for adding an aar dependency can be found at https://developer.android.com/studio/projects/android-library.html#AddDependency
+
 ## Usage
-### Identify User
+### Messaging
 
-The `identify` method is how you associate your users and their actions to a recognizable `userId` and `Traits`.
+Engage Firebase extension wraps the Firebase messaging services to provide a simple and robust method to implement remote messaging.
 
+To listen to push notifications or remote data messages, you just need to register with the Engage Messenger in a few simple steps.
+ 
+#### Step 1:  Get an instance of `Messenger`
 ```javascript
- Engage.identify(new Traits(userId)
-                .setName(name)
-                .setAge(age)
-                .setCity(city)
-                .setCountry(country)
-                .setEmail(email)
-                .setGender(gender)
-                .setRegistrationStatus(registrationStatus)
-                .setNetwork(isp)
-        );
+  Messenger messenger = Messenger.getInstance();
 ```
-If `Traits` is initialized with the default constructor, user will be treated as anonymous.
-
-Example `identify` call:
-
+#### Step 2:  Register for remote messages
 ```javascript
- Engage.identify(new Traits("4981498")
-                .setName("Jithin")
-                .setAge(27)
-                .setGender(Traits.GENDER.MALE)
-                .setRegistrationStatus("subscribed")
-        );
-```
+messenger.setRemoteMessageListener(new RemoteMessageListener() {
+        @Override
+        public void onMessageReceived(RemoteMessage remoteMessage) {
+		//Remote data message or notification from Firebase console
+        }
 
-### Track
+        @Override
+        public void onPushNotificationReceived(NotificationData data) {
+		//Engage push notification campaign
+        }
 
-The `track` method lets you record any actions your users perform. You can see a track example in the guide or find details on the track method payload.
-
-```javascript
-Engage.track("eventName",properties);
+        @Override
+        public void onTokenRefresh(String token) {
+		//Firebase instance id token
+        }
+    });
 ```
 
-The `track`  method has the following parameters:
+#### Step 3:  Show the notification
+The simplest way to build a notification from `NotificationData` is to call `NotificationData.getSimpleNotificationBuilder(context)`. 
 
-| Parameter                 | Type                    | Description
-| ------------------------- | ----------------------- | -------------
-| `eventName`               | String             	  | The name of the event you’re tracking.
-| `properties`    			| Bundle                  | A dictionary of options.
+```javascript
+NotificationCompat.Builder builder = notificationData.getSimpleNotificationBuilder(context);
+context.getSystemService(Context.NOTIFICATION_SERVICE);
+notificationManager.notify(id, notificationBuilder.build());
+```
+Don't forget to call `messenger.onNotificationReceived(notificationData)` to let the Engage SDK know that the notification is shown.
 
-Example `track` call:
+#### Step 4:  Notification open event
+Once the component(`Activity/Service/Receiver`) set in the Notification is opened, you should call `messenger.onNotificationOpened(notificationData)` to let the Engage SDK know that user interacted with the notification.
+
+### Analytics
+
+Engage Firebase Analytics  wraps Google's Firebase Analytics and methods for logging events and setting user properties. The events and properties logged with Analytics will be also forwarded to to Engage SDK.
+
+To start with Engage Firebase Analytics, get an instance of the `Analytics` class.
+ 
+```javascript
+Analytics analytics = Analytics.getInstance(appContext);
+```
+`Analytics` class has all the methods from `com.google.firebase.analytics.FirebaseAnalytics` along with underlying Engage functionalities.
+
+Example for logging events:
 
 ```javascript
 Bundle properties = new Bundle();
-properties.putString("content_title", "How to Create a Tracking Plan");
-properties.putString("content_id", "1234");
+properties.putString("property1", "val1");
+properties.putString("property2", "val2");
 
-Engage.track("play_content", properties);
+analytics.logEvent("eventName", properties);
 ```
-### Campaigns
-Campaigns are triggered by the SDK on events that are defined in the campaign page.
-You can register a  `CampaignTriggerListener` to know when a campaign is triggered and obtain an action-string based on user interaction with the campaign.
-
-```javascript
-Engage.setCampaignTriggerListener(new CampaignTriggerListener() {
-            @Override
-            public boolean onCampaignTriggered(EngageCampaign engageCampaign) {
-                //Return false if you don't want to show the campaign dialog
-                return true;
-            }
-			@Override
-            public void onCampaignAction(EngageCampaign engageCampaign) {
-                //Do post actions based on the actionString
-                String actionString = engageCampaign.getActionString();
-            }
-        });
-```
-
-## Extensions
-In the interest of keeping our SDK lightweight and to allow users selectively use extended Engage SDK features we use an extension based architecture.
-
-For example, **Notification Campaign** support can be implemented by adding `engage-firebase`
-extension.
-
-Engage Extensions can be used by simply adding them as project dependencies. 
-The available Engage Android Extensions can be found at https://github.com/diagnal/engage-android-sdk/extensions.
