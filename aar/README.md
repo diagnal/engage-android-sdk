@@ -58,7 +58,7 @@ The `track`  method has the following parameters:
 
 | Parameter                 | Type                    | Description
 | ------------------------- | ----------------------- | -------------
-| `eventName`               | String             	  | The name of the event you’re tracking.
+| `eventName`               | String             	 | The name of the event you’re tracking.
 | `properties`    			| Bundle                  | A dictionary of options.
 
 Example `track` call:
@@ -82,15 +82,17 @@ For example, the content view event can be logged as follows:
 ```
 
 Engage Android SDK support the following event creators: 
+
 | Event Creator                 | Description
-| ----------------------------- | ------------------------------------------
-| `AdvertisementEventCreator` 	|     	Event creator for Advertisement playback events
-| `ContentEventCreator` 		|     	Event creator for Media Content events
-| `DownloadEventCreator` 		|     	Event creator for Content Download events
-| `PlayerEventCreator` 		    |     	Event creator for Media Playback events
-| `PurchaseEventCreator` 		|     	Event creator for Purchase events
-| `SearchEventCreator` 		    |     	Event creator for Search events
-| `UserEventCreator` 		    |     	Event creator for User events
+| ----------------------------- | --------------------------------
+| `AdvertisementEventCreator` 	|Event creator for Advertisement playback events
+| `ContentEventCreator` 	|Event creator for Media Content events
+| `DownloadEventCreator` 	|Event creator for Content Download events
+| `PlayerEventCreator` 		|Event creator for Media Playback events
+| `PurchaseEventCreator` 	|Event creator for Purchase events
+| `SearchEventCreator` 		|Event creator for Search events
+| `UserEventCreator` 		|Event creator for User events
+
 ### Campaigns
 Campaigns are triggered by the SDK on events that are defined in the [campaign page](https://engage.diagnal.com/campaigns).
 You can register a  `CampaignTriggerListener` to know when a campaign is triggered and obtain an action-string based on user interaction with the campaign.
@@ -115,11 +117,11 @@ Engage wraps the Firebase messaging services to provide a simple and robust meth
 To listen to push notifications or remote data messages, you just need to register with the Engage Messenger in a few simple steps.
  
 #### Step 1:  Get an instance of Messenger
-```javascript
+```java
   Messenger messenger = Messenger.getInstance();
 ```
 #### Step 2:  Register for remote messages
-```javascript
+```java
 messenger.setRemoteMessageListener(new RemoteMessageListener() {
         @Override
         public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -141,7 +143,7 @@ messenger.setRemoteMessageListener(new RemoteMessageListener() {
 #### Step 3:  Show the notification
 The simplest way to build a notification from `NotificationData` is to call `NotificationData.getSimpleNotificationBuilder(context)`. 
 
-```javascript
+```java
 NotificationCompat.Builder builder = notificationData.getSimpleNotificationBuilder(context);
 context.getSystemService(Context.NOTIFICATION_SERVICE);
 notificationManager.notify(id, notificationBuilder.build());

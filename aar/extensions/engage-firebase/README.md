@@ -2,6 +2,8 @@
 # Engage Firebase Extension #
 Engage Firebase Extension wraps Firebase Messaging and analytics to provide methods for logging events and setting user properties.
 
+Engage Firebase Extension [class reference documents.](https://diagnal-engage.s3.amazonaws.com/engage-sdk-docs/extensions/engage-firebase/index.html)
+
 ## Getting Started
 ### Step 1: Install the Engage Core Library
 Engage Firebase is an extension of Engage Android SDK and has dependency on `engage-core` library.
