@@ -152,12 +152,3 @@ Don't forget to call `messenger.onNotificationReceived(notificationData)` to let
 
 #### Step 4:  Notification open event
 Once the component(`Activity/Service/Receiver`) set in the Notification is opened, you should call `messenger.onNotificationOpened(notificationData)` to let the Engage SDK know that user interacted with the notification.
-
-## Extensions
-In the interest of keeping our SDK lightweight and to allow users selectively use extended Engage SDK features we use an extension based architecture.
-
-For example, **Firebase Analytics** support can be implemented by adding `engage-firebase`
-extension.
-
-Engage Extensions can be used by simply adding them as project dependencies. 
-The available Engage Android Extensions can be found at https://github.com/diagnal/engage-android-sdk/tree/master/aar/extensions
