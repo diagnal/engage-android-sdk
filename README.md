@@ -4,7 +4,7 @@ Engage is real-time targeted marketing campaigns that drive user acquisition and
 It promotes content to users and access customer sentiment.
 Engage Android SDK allows easy integration of Engage to your android application in a few steps.
 
-Engage Android SDK [class reference documents.](https://diagnal-engage.s3.amazonaws.com/engage-android-sdk-docs/engage-core/index.html)
+Engage Android SDK [class reference documents](https://diagnal-engage.s3.amazonaws.com/engage-android-sdk-docs/engage-core/index.html) and  [release notes.](https://diagnal-engage.s3.amazonaws.com/engage-android-sdk-docs/release-notes.txt)
 Engage Android SDK requires API 17 (Android 4.2) or higher. 
 
 ## Getting Started
@@ -42,7 +42,7 @@ Example `identify` call:
                 .setName("Jithin")
                 .setAge(27)
                 .setGender(Traits.GENDER.MALE)
-                .setRegistrationStatus("subscribed")
+                .setRegistrationStatus(Traits.STATUS.REGISTERED)
         );
 ```
 
@@ -177,11 +177,25 @@ The simplest way to build a notification from `NotificationData` is to call `Not
 
 ```java
 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-NotificationCompat.Builder builder = notificationData.getSimpleNotificationBuilder(context);
-context.getSystemService(Context.NOTIFICATION_SERVICE);
-notificationManager.notify(id, notificationBuilder.build());
+//MainActivity is the one to be opened when user clicks the notification
+Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+NotificationCompat.Builder builder = notificationData.getSimpleNotificationBuilder(getApplicationContext(), intent);
+notificationManager.notify(id, builder.build());
+messenger.onNotificationReceived(notificationData);
 ```
 Don't forget to call `messenger.onNotificationReceived(notificationData)` to let the Engage SDK know that the notification is shown.
 
 #### Step 5:  Notification open event
 Once the component(`Activity/Service/Receiver`) set in the Notification is opened, you should call `messenger.onNotificationOpened(notificationData)` to let the Engage SDK know that user interacted with the notification.
+You can obtain `NotificationData` from the Intent within the component using `EXTRA_NOTIFICATION_DATA`
+```java
+NotificationData data = getIntent().getParcelableExtra(NotificationData.EXTRA_NOTIFICATION_DATA); 
+if (data != null) {
+  if (Engage.hasInitailized()) {
+    Messenger.getInstance().onNotificationOpened(data);
+    //You'll get the appropriate `NotificationAction` based on the user interaction with the notification.
+    String action = data.getNotificationAction().getAction()
+  }
+}
+
+```
