@@ -9,7 +9,17 @@ Engage Android SDK requires API 17 (Android 4.2) or higher.
 
 ## Getting Started
 ### Step 1: Install the Library
-The Engage Android SDK is distributed as `aar` package. You can obtain the latest Engage Android SDK aar file from https://github.com/diagnal/engage-android-sdk/
+##### Method 1
+Engage Android SDK library is in the Maven central repository. The easiest way to integrate Engage Android SDK library is by simply declaring it as dependency in your `build.gradle` file.
+
+```java
+dependencies {
+    compile 'com.diagnal.engage:engage:1.3.0'
+}
+```
+
+##### Method 2
+The Engage Android SDK is also distributed as `aar` package. You can obtain the latest Engage Android SDK aar file from https://github.com/diagnal/engage-android-sdk/
 
 Include aar file as a dependency in you project. 
 The steps for adding an aar dependency can be found at https://developer.android.com/studio/projects/android-library.html#AddDependency
@@ -93,6 +103,12 @@ Engage Android SDK support the following event creators:
 | `SearchEventCreator` 		|Event creator for Search events
 | `UserEventCreator` 		|Event creator for User events
 
+#### Reporting Deep Links
+Engage allows reporting your Deep Links from external campaigns like SMS/Email/Facebook.
+###### Step 1: Deep link integration
+Follow https://developer.android.com/training/app-links/deep-linking.html to capture deep links in your app.
+###### Step 2: Reporting deep link to Engage
+Once the deep link URL is available, simply call  ```Engage.onDeepLinkReceived(url);``` for conversion of your deep link campaign url.
 ### Campaigns
 Campaigns are triggered by the SDK on events that are defined in the [campaign page](https://engage.diagnal.com/campaigns).
 You can register a  `CampaignTriggerListener` to know when a campaign is triggered and obtain an action-string based on user interaction with the campaign.
