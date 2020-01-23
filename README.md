@@ -1,3 +1,4 @@
+
 [![N|Solid](http://i.imgur.com/iz9YsTS.png)](https://diagnal.com)
 # Engage Android SDK #
 Engage is real-time targeted marketing campaigns that drive user acquisition and conversion.
@@ -14,7 +15,7 @@ Engage Android SDK library is in the Maven central repository. The easiest way t
 
 ```java
 dependencies {
-    compile 'com.diagnal.engage:engage:1.3.0'
+    compile 'com.diagnal.engage:engage:1.3.6'
 }
 ```
 
@@ -129,7 +130,7 @@ Engage.setCampaignTriggerListener(new CampaignTriggerListener() {
 ```
 ## Messaging
 
-Engage wraps the Firebase messaging services to provide a simple and robust method to implement remote messaging.
+Engage wraps the Firebase and Huawei messaging services to provide a simple and robust method to implement remote messaging.
 To listen to push notifications or remote data messages, you just need to register with the Engage Messenger in a few simple steps.
 
 #### Step 1:  Add firebase in your project
@@ -163,17 +164,46 @@ allprojects {
  apply plugin: 'com.google.gms.google-services'
 ```
 Getting a "Could not find" error? Make sure you have the latest Google Repository in the Android SDK manager
+#### Step 2:  Add Huawei push in your project
+1. Follow the Huawei HMS guide to add your application in the Huawei AppGallery. And enable the push notification service
+https://developer.huawei.com/consumer/en/service/hms/catalog/huaweipush_v3.html
+2. Once the app is created, download the `agconnect-services.json` file as put it in your app folder
+3. Add the following repository in `allprojects` section of your main gradle file:  
+```xml
+maven {url 'http://developer.huawei.com/repo/'}
+```
+4. Add the Huawei App id in your manifest file:
+```xml
+<meta-data
+   android:name="com.huawei.hms.client.appid"
+   android:value="appid=xxxxxxxx" />
+```
+5. Add the following rules in your Proguard/R8 file:
+```java
+-ignorewarnings
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes SourceFile,LineNumberTable
+-keep class com.hianalytics.android.**{*;}
+-keep class com.huawei.updatesdk.**{*;}
+-keep class com.huawei.hms.**{*;}
+```
+6. Set `Messenger.getInstance().setForceFirebaseMesssaging` to `true` if you want to  prioritize Firebase push over HMS on supported Huawei devices
 
-#### Step 2:  Get an instance of Messenger
+> NOTE: If you don't need Huawei push support you need to perform only  steps 3 and 5
+
+#### Step 3:  Get an instance of Messenger
 ```java
   Messenger messenger = Messenger.getInstance();
 ```
-#### Step 3:  Register for remote messages
+#### Step 4:  Register for remote messages
 ```java
 messenger.setRemoteMessageListener(new RemoteMessageListener() {
         @Override
         public void onMessageReceived(RemoteMessage remoteMessage) {
-		//Remote data message or notification from Firebase console
+		//Remote data message or notification from Firebase/HMS console
         }
 
         @Override
@@ -182,13 +212,13 @@ messenger.setRemoteMessageListener(new RemoteMessageListener() {
         }
 
         @Override
-        public void onTokenRefresh(String token) {
-		//Firebase instance id token
+        public void onTokenRefresh(Messenger.Type type, String token) {
+		//Firebase instance id token or HMS push token
         }
     });
 ```
 
-#### Step 4:  Show the notification
+#### Step 5:  Show the notification
 The simplest way to build a notification from `NotificationData` is to call `NotificationData.getSimpleNotificationBuilder(context)`. 
 
 ```java
@@ -201,7 +231,7 @@ messenger.onNotificationReceived(notificationData);
 ```
 Don't forget to call `messenger.onNotificationReceived(notificationData)` to let the Engage SDK know that the notification is shown.
 
-#### Step 5:  Notification open event
+#### Step 6:  Notification open event
 Once the component(`Activity/Service/Receiver`) set in the Notification is opened, you should call `messenger.onNotificationOpened(notificationData)` to let the Engage SDK know that user interacted with the notification.
 You can obtain `NotificationData` from the Intent within the component using `EXTRA_NOTIFICATION_DATA`
 ```java
