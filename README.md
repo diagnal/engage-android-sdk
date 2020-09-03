@@ -201,9 +201,14 @@ maven {url 'http://developer.huawei.com/repo/'}
 #### Step 4:  Register for remote messages
 ```java
 messenger.setRemoteMessageListener(new RemoteMessageListener() {
+
         @Override
         public void onMessageReceived(RemoteMessage remoteMessage) {
-		//Remote data message or notification from Firebase/HMS console
+                // Get HMS message data. https://developer.huawei.com/consumer/en/doc/development/HMS-References/push-RemoteMessage-cls
+                remoteMessage.getHmsRemoteMessage();
+
+                // Get Firebase message data.https://firebase.google.com/docs/reference/android/com/google/firebase/messaging/RemoteMessage
+                remoteMessage.getFirebaseRemoteMessage()
         }
 
         @Override
